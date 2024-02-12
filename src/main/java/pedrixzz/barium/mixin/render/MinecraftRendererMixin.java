@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftRenderer.class)
 public abstract class MinecraftRendererMixin {
-
     @Inject(method = "render", at = @At("HEAD"))
     private void onRender(CallbackInfo ci) {
         // Chamar o método "renderWorld" do MinecraftRenderer
