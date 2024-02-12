@@ -26,7 +26,7 @@ public class MinecraftRenderer {
         updateVertexBuffer();
 
         // Renderizar chunks visíveis
-        GL11.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBuffer);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBuffer);
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
         GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
         for (Chunk chunk : chunks) {
@@ -35,7 +35,7 @@ public class MinecraftRenderer {
             }
         }
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
     public void addChunk(Chunk chunk) {
@@ -97,6 +97,19 @@ public class MinecraftRenderer {
         public void render() {
             // Implementar lógica para renderizar o chunk
         }
+
+        public Block getBlock(int x, int y, int z) {
+            // Implementar lógica para recuperar o bloco nas coordenadas
+            return null;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getZ() {
+            return z;
+        }
     }
 
     private class Vertex {
@@ -113,4 +126,4 @@ public class MinecraftRenderer {
             this.z = z;
         }
     }
-}
+    }
