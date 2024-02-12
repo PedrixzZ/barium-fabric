@@ -14,6 +14,4 @@ public abstract class MinecraftRendererMixin {
     public void render() {
 
     }
-        return true;
-    }
 }
