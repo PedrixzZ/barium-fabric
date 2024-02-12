@@ -26,10 +26,3 @@ public abstract class MinecraftRendererMixin {
 
         return true;
     }
-
-    @Accessor
-    public abstract List<Chunk> getChunks();
-
-    @Accessor
-    public abstract void setChunks(List<Chunk> chunks);
-}
