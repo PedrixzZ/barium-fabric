@@ -1,4 +1,4 @@
-package com.pedrixzz;
+package pedrixzz.barium.client;
 
 import net.fabricmc.api.ClientModInitializer;
 
