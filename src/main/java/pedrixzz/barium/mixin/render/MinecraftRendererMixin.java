@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(MinecraftRenderer.class)
 public abstract class MinecraftRendererMixin {
 
-    @Inject
     public void render() {
 
     }
