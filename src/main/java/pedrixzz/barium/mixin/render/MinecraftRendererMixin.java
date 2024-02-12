@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.joml.Vector3f;
 
-@Mixin
+@Mixin({MinecraftRenderer.class})
 public class MinecraftRendererMixin {
 
     private static final int CHUNK_SIZE = 16;
