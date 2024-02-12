@@ -11,16 +11,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class MinecraftRendererMixin {
 
     @Inject
-    private void inject(RendererAccessor renderer) {
-    }
-
     public void render() {
 
     }
-
-    @Redirect(method = "updateVertexBuffer", at = @At(value = "INVOKE", target = "java/util/List.addAll(Ljava/util/Collection;)Z"))
-    private boolean onAddAllVertices(List<Vertex> vertices, Collection<Vertex> newVertices) {
-
         return true;
     }
 }
