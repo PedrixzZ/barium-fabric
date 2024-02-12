@@ -2,7 +2,7 @@ package pedrixzz.barium;
 
 import net.fabricmc.api.ModInitializer;
 
-public class BariumClient implements ModInitializer {
+public class Barium implements ModInitializer {
 
     @Override
     public void onInitialize() {
