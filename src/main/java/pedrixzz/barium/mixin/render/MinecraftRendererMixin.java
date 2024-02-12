@@ -1,6 +1,14 @@
 package pedrixzz.barium.mixin.render;
 
 import pedrixzz.barium.client.render.MinecraftRenderer;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Overwrite;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.MixinEnvironment;
+import org.spongepowered.asm.mixin.Side;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.Accessor;
 
 @Mixin(MinecraftRenderer.class)
 public abstract class MinecraftRendererMixin {
