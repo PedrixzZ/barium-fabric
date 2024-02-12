@@ -8,10 +8,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftRenderer.class)
 public abstract class MinecraftRendererMixin {
-    @Inject(method = "render", at = @At("HEAD"))
-    private void onRender(CallbackInfo ci) {
-        // Chamar o método "renderWorld" do MinecraftRenderer
-        MinecraftRenderer renderer = (MinecraftRenderer) (Object) this;
-        renderer.renderWorld();
+
+    @Inject
+    private void inject(RendererAccessor renderer) {
     }
+
+    @Overwrite
+    public void render() {
+
+        super.render();
+    }
+
+    @Redirect(method = "updateVertexBuffer", at = @At(value = "INVOKE", target = "java/util/List.addAll(Ljava/util/Collection;)Z"))
+    private boolean onAddAllVertices(List<Vertex> vertices, Collection<Vertex> newVertices) {
+
+        return true;
+    }
+
+    @Accessor
+    public abstract List<Chunk> getChunks();
+
+    @Accessor
+    public abstract void setChunks(List<Chunk> chunks);
 }
