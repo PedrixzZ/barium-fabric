@@ -5,6 +5,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Overwrite;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.Accessor;
 
 @Mixin(MinecraftRenderer.class)
 public abstract class MinecraftRendererMixin {
@@ -16,7 +19,6 @@ public abstract class MinecraftRendererMixin {
     @Overwrite
     public void render() {
 
-        super.render();
     }
 
     @Redirect(method = "updateVertexBuffer", at = @At(value = "INVOKE", target = "java/util/List.addAll(Ljava/util/Collection;)Z"))
