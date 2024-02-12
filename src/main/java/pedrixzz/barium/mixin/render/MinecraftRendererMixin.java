@@ -83,7 +83,8 @@ public class MinecraftRendererMixin {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
-    private class Chunk {
+    @Mixin(MinecraftRendererMixin$Chunk.class)
+    public class Chunk {
 
         private int x;
         private int z;
@@ -117,7 +118,8 @@ public class MinecraftRendererMixin {
         }
     }
 
-    private class Vertex {
+    @Mixin(MinecraftRendererMixin$Vertex.class)
+    public class Vertex {
 
         public static final int SIZE = 3;
 
