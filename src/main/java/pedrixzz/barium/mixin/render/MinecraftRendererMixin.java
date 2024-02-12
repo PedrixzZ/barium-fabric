@@ -17,7 +17,7 @@ public class MinecraftRendererMixin {
     private List<Vertex> vertices = new ArrayList<>();
     private int vertexBuffer;
 
-    public MinecraftRenderer() {
+    public MinecraftRendererMixin() {
         // Criar buffer de vértices
         vertexBuffer = GL15.glGenBuffers();
     }
