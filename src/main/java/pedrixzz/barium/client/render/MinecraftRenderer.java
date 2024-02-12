@@ -1,6 +1,7 @@
 package pedrixzz.barium.client.render;
 
 import java.util.ArrayList;
+import net.minecraft.block.Block;
 import net.minecraft.block.AbstractBlock.AbstractBlockState;
 import java.util.List;
 
