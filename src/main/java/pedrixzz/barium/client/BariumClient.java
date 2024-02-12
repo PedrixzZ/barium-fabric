@@ -1,12 +1,10 @@
-package pedrixzz.barium.client;
+package com.pedrixzz;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 
-public class BariumClient implements ModInitializer {
-
-    @Override
-    public void onInitialize() {
-        // Registre seus eventos, blocos, entidades, etc. aqui.
-        System.out.println("Barium carregado!");
-    }
+public class BariumClient implements ClientModInitializer {
+	@Override
+	public void onInitializeClient() {
+		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
+	}
 }
