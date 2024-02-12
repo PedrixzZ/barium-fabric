@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.joml.Vector3f;
 
-@Mixin(MinecraftRendererMixin.class)
+@Mixin(MinecraftClient.class)
 public class MinecraftRendererMixin {
 
     private static final int CHUNK_SIZE = 16;
@@ -83,8 +83,7 @@ public class MinecraftRendererMixin {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
-    @Mixin(MinecraftRendererMixin$Chunk.class)
-    public class Chunk {
+    private class Chunk {
 
         private int x;
         private int z;
@@ -118,8 +117,7 @@ public class MinecraftRendererMixin {
         }
     }
 
-    @Mixin(MinecraftRendererMixin$Vertex.class)
-    public class Vertex {
+    private class Vertex {
 
         public static final int SIZE = 3;
 
