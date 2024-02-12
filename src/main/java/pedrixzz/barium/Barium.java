@@ -1,10 +1,12 @@
 package pedrixzz.barium;
 
-import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import net.fabricmc.api.ModInitializer;
 
-public class Barium implements PreLaunchEntrypoint {
+public class BariumClient implements ModInitializer {
+
     @Override
-    public void onPreLaunch() {
+    public void onInitialize() {
+        // Registre seus eventos, blocos, entidades, etc. aqui.
         System.out.println("Barium carregado!");
     }
 }
