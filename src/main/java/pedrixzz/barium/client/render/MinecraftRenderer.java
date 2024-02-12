@@ -128,4 +128,4 @@ public class MinecraftRenderer {
             this.z = z;
         }
     }
-    }
+}
