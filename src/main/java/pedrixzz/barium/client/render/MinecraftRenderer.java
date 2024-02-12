@@ -59,7 +59,7 @@ public class MinecraftRenderer {
                             Block block = chunk.getBlock(x, y, z);
                             if (block != null) {
                                 // Adicionar vértices do bloco
-                                vertices.addAll(block.getVertices(x + chunk.getX(), y, z + chunk.getZ()));
+                               // vertices.addAll(block.getVertices(x + chunk.getX(), y, z + chunk.getZ()));
                             }
                         }
                     }
