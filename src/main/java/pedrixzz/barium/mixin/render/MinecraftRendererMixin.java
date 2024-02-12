@@ -1,4 +1,4 @@
-package pedrixzz.barium.client.render;
+package pedrixzz.barium.mixin.render;
 
 import org.spongepowered.asm.mixin.Mixin;
 import java.util.ArrayList;
