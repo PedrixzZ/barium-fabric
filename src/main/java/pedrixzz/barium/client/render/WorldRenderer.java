@@ -1,6 +1,6 @@
 package pedrixzz.barium.client.render;
 
-import net.minecraft.client.render.WorldRenderer
+import net.minecraft.client.render.WorldRenderer;
 import pedrixzz.barium.Barium;
 import org.spongepowered.asm.mixin.Mixin;
 import java.util.ArrayList;
