@@ -9,7 +9,7 @@ import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.world.World;
 import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f
+import org.joml.Matrix4f;
 
 @Mixin(WorldRenderer.class)
 public abstract class WorldRendererMixin {
