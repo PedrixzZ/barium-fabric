@@ -35,8 +35,7 @@ public class WorldRendererMixin {
     }
 
     private void renderDebugOutline(BlockRenderView view, BlockState state, BlockPos pos, Matrix4f matrix, BufferBuilder buffer) {
-        @Nullable
-        public @Nullable World getWorld()
+        World world = view.getRenderer().getWorld();
         BlockEntity blockEntity = world.getBlockEntity(pos);
     }
 
