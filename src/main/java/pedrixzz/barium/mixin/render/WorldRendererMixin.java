@@ -9,6 +9,7 @@ import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.world.World;
 import net.minecraft.client.util.math.MatrixStack;
+import org.joml.Matrix4f
 
 @Mixin(WorldRenderer.class)
 public abstract class WorldRendererMixin {
@@ -17,7 +18,7 @@ public abstract class WorldRendererMixin {
     public abstract void originalRender();
 
     public void render() {
-        WorldRenderer.render(matrixStack, partialTicks, world.getGameTime(), isFancy, lightmapTextureManager, projectionMatrix);
+        WorldRenderer.render(MatrixStack, float, long, boolean, Camera,GameRenderer, LightmapTextureManager, Matrix4f);
         
 
         // Chamar o método original se necessário (opcional)
