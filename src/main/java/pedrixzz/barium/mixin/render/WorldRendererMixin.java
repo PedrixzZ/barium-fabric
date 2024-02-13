@@ -60,14 +60,14 @@ public abstract class WorldRendererMixin {
 
         // Geração de Vértices
         for (int i = 0; i < vertexCount; i++) {
-            vertices[i * 3] = ...;
-            vertices[i * 3 + 1] = ...;
-            vertices[i * 3 + 2] = ...;
+         //   vertices[i * 3] = ...;
+        //    vertices[i * 3 + 1] = ...;
+        //    vertices[i * 3 + 2] = ...;
         }
 
         // Geração de Índices
         for (int i = 0; i < 6; i++) {
-            indices[i] = ...;
+       //     indices[i] = ...;
         }
 
         // Envio de dados para a GPU
@@ -92,7 +92,7 @@ public abstract class WorldRendererMixin {
         for (int x = minX; x < maxX; x++) {
             for (int y = minY; y < maxY; y++) {
                 for (int z = minZ; z < maxZ; z++) {
-                    lightmap[x * 16 + z] = ...;
+            //        lightmap[x * 16 + z] = ...;
                 }
             }
         }
