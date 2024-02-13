@@ -1,7 +1,7 @@
 package pedrixzz.barium.mixin.render;
 
 import org.spongepowered.asm.mixin.Mixin;
-import net.minecraft.client.render.WorldRenderer
+import net.minecraft.client.render.WorldRenderer;
 import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.block.AbstractBlock.AbstractBlockState;
