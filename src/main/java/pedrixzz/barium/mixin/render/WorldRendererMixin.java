@@ -19,8 +19,6 @@ public abstract class WorldRendererMixin {
 
     public void render() {
         WorldRenderer.render(MatrixStack, float, long, boolean, Camera, GameRenderer, LightmapTextureManager, Matrix4f);
-        
-
         // Chamar o método original se necessário (opcional)
         // originalRender();
     }
