@@ -6,7 +6,5 @@ import pedrixzz.barium.client.render.WorldRenderer;
 public class BariumClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		
-		WorldRenderer.registerWorldRenderer();
 	}
 }
