@@ -12,7 +12,5 @@ public class Barium implements ModInitializer {
 
     @Override
     public void onInitialize() {
-	    
-         WorldRenderer.registerWorldRenderer();
 	}
 }
