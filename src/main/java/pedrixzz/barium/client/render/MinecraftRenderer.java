@@ -132,6 +132,6 @@ public class MinecraftRenderer {
         }
     }
     public static void registerMinecraftRenderer() {
-    Barium.LOGGER.info("Registre Minecraft Renderer for " + Barium.MOD_ID
+    Barium.LOGGER.info("Registre Minecraft Renderer for " + Barium.MOD_ID);
                        }
 }
