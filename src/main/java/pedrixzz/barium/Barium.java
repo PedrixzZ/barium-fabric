@@ -1,7 +1,7 @@
 package pedrixzz.barium;
 
 import net.fabricmc.api.ModInitializer;
-import pedrixzz.barium.client.render.MinecraftRenderer;
+import pedrixzz.barium.client.render.WorldRenderer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,6 @@ public class Barium implements ModInitializer {
     @Override
     public void onInitialize() {
 	    
-         MinecraftRenderer.registerMinecraftRenderer();
+         WorldRenderer.registerWorldRenderer();
 	}
 }
