@@ -6,6 +6,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.util.Colors;
 import org.joml.Matrix4f;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -21,10 +22,10 @@ public class WorldRendererMixin {
     private void onRenderStart(BlockRenderView view, BlockState state, BlockPos pos, Matrix4f matrix, BufferBuilder buffer, boolean checkSides, CallbackInfo info) {
         if (state.isSolid()) {
             buffer.begin(VertexFormat.DEFAULT, Tessellator.State.POSITION_COLOR);
-            buffer.vertex(pos.getX(), pos.getY(), pos.getZ(), Color.WHITE.getPacked());
-            buffer.vertex(pos.getX() + 1, pos.getY(), pos.getZ(), Color.WHITE.getPacked());
-            buffer.vertex(pos.getX() + 1, pos.getY() + 1, pos.getZ(), Color.WHITE.getPacked());
-            buffer.vertex(pos.getX(), pos.getY() + 1, pos.getZ(), Color.WHITE.getPacked());
+            buffer.vertex(pos.getX(), pos.getY(), pos.getZ(), Colors.WHITE.getPacked());
+            buffer.vertex(pos.getX() + 1, pos.getY(), pos.getZ(), Colors.WHITE.getPacked());
+            buffer.vertex(pos.getX() + 1, pos.getY() + 1, pos.getZ(), Colors.WHITE.getPacked());
+            buffer.vertex(pos.getX(), pos.getY() + 1, pos.getZ(), Colors.WHITE.getPacked());
             buffer.end();
             info.cancel();
             return;
