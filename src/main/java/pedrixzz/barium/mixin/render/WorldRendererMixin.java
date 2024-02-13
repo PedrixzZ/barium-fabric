@@ -17,7 +17,8 @@ public abstract class WorldRendererMixin {
     public abstract void originalRender();
 
     public void render() {
-        WorldRenderer.render();
+        WorldRenderer.render(matrixStack, partialTicks, world.getGameTime(), isFancy, lightmapTextureManager, projectionMatrix);
+        
 
         // Chamar o método original se necessário (opcional)
         // originalRender();
