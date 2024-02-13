@@ -8,7 +8,7 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.world.World;
-import net.minecraft.util.math.MatrixStack;
+import net.minecraft.client.util.math.MatrixStack
 
 @Mixin(WorldRenderer.class)
 public abstract class WorldRendererMixin {
@@ -16,7 +16,6 @@ public abstract class WorldRendererMixin {
     @Shadow
     public abstract void originalRender();
 
-    @Overwrite
     public void render() {
         WorldRenderer.render();
 
