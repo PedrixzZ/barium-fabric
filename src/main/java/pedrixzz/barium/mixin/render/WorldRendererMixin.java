@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL15;
 import org.joml.Vector3f;
 
 @Mixin(WorldRenderer.class)
-public class WorldRendererMixin {
+public abstract class WorldRendererMixin {
 
     private static final int CHUNK_SIZE = 16;
 
