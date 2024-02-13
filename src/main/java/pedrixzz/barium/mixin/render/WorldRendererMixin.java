@@ -1,105 +1,69 @@
 package pedrixzz.barium.mixin.render;
 
 import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.client.render.Frustum;
-import net.minecraft.world.chunk.Chunk;
-
+import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.BitSet;
-
-import static org.lwjgl.opengl.GL11.*;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Overwrite;
 
 @Mixin(WorldRenderer.class)
-public abstract class WorldRendererMixin {
+public class WorldRendererMixin {
+
+    @Shadow
+    private BufferBuilder bufferBuilder;
 
     @Inject
-    private WorldRendererMixin(WorldRenderer worldRenderer) {
+    public WorldRendererMixin(WorldRenderer worldRenderer) {
         // ...
     }
 
     @Overwrite
-    public void renderChunk(Chunk chunk, BlockPos pos, Frustum frustum, float partialTicks) {
-        // Otimização de Chunk Rendering
+    public void render(World world, Entity viewEntity, IBlockState state, BlockPos pos, Matrix4f matrix4f, float f, float f1, float f2, float f3) {
+        // Otimização de vértices
+        int vertexCount = bufferBuilder.getVertexCount();
+        if (vertexCount > 0) {
+            VertexFormat vertexFormat = bufferBuilder.getVertexFormat();
+            int stride = vertexFormat.getVertexSize();
 
-        // Algoritmo de Renderização de Chunk Aprimorado
-        if (!frustum.isBoundingBoxInFrustum(chunk.getBoundingBox())) {
-            return;
-        }
+            // Combine vértices adjacentes com a mesma cor e textura
+            for (int i = 0; i < vertexCount - 1; i++) {
+                int offsetA = i * stride;
+                int offsetB = (i + 1) * stride;
 
-        // Redução do Uso de Memória
-        BitSet visibleFaces = new BitSet(6);
-        for (int i = 0; i < 6; i++) {
-            if (frustum.isVisible(chunk.getFaces()[i])) {
-                visibleFaces.set(i);
-            }
-        }
+                // Verifique se os vértices têm a mesma cor e textura
+                if (bufferBuilder.getColor(offsetA).equals(bufferBuilder.getColor(offsetB)) &&
+                        bufferBuilder.getTexCoord(offsetA).equals(bufferBuilder.getTexCoord(offsetB))) {
+                    // Combine os vértices
+                    bufferBuilder.setVertex(offsetA, bufferBuilder.getPosition(offsetA), bufferBuilder.getNormal(offsetA),
+                            bufferBuilder.getColor(offsetA), bufferBuilder.getTexCoord(offsetA), bufferBuilder.getLightmap(offsetA),
+                            bufferBuilder.getOverlay(offsetA));
 
-        // Renderização de Faces
-        for (int i = 0; i < 6; i++) {
-            if (visibleFaces.get(i)) {
-                renderFace(chunk, i, pos, partialTicks);
-            }
-        }
-
-        // ...
-    }
-
-    private void renderFace(Chunk chunk, int face, BlockPos pos, float partialTicks) {
-        // ...
-
-        // Otimização de Vertex Buffer
-        int vertexCount = 4;
-        int[] indices = new int[6];
-
-        // Geração de Vértices
-        for (int i = 0; i < vertexCount; i++) {
-         //   vertices[i * 3] = ...;
-        //    vertices[i * 3 + 1] = ...;
-        //    vertices[i * 3 + 2] = ...;
-        }
-
-        // Geração de Índices
-        for (int i = 0; i < 6; i++) {
-       //     indices[i] = ...;
-        }
-
-        // Envio de dados para a GPU
-        gl.bindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        gl.bufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-
-        gl.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-        gl.bufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
-
-        // ...
-    }
-
-    // ...
-
-    @Overwrite
-    public void updateLightmap(Chunk chunk, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-        // Otimização de Lightmap
-
-        // ...
-
-        // Cálculo de Lightmap
-        for (int x = minX; x < maxX; x++) {
-            for (int y = minY; y < maxY; y++) {
-                for (int z = minZ; z < maxZ; z++) {
-            //        lightmap[x * 16 + z] = ...;
+                    // Remova o vértice duplicado
+                    bufferBuilder.removeVertex(i + 1);
+                    vertexCount--;
+                    i--;
                 }
             }
         }
 
+        // Otimização de shaders
         // ...
+
+        // Multithreading
+        // ...
+
+        bufferBuilder.endVertex();
     }
 
+    // Otimização de alocações
     // ...
 
+    // ...
 }
+
