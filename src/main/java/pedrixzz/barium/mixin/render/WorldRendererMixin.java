@@ -10,8 +10,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.joml.Vector3f;
 
-@Mixin({MinecraftRendererMixin.class})
-public class MinecraftRendererMixin {
+@Mixin(WorldRenderer.class)
+public class WorldRendererMixin {
 
     private static final int CHUNK_SIZE = 16;
 
@@ -19,7 +19,7 @@ public class MinecraftRendererMixin {
     private List<Vertex> vertices = new ArrayList<>();
     private int vertexBuffer;
 
-    public MinecraftRendererMixin() {
+    public WorldRendererMixin() {
         // Criar buffer de vértices
         vertexBuffer = GL15.glGenBuffers();
     }
