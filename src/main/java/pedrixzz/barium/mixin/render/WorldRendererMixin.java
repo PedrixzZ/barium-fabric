@@ -35,16 +35,9 @@ public class WorldRendererMixin {
     }
 
     private void renderDebugOutline(BlockRenderView view, BlockState state, BlockPos pos, Matrix4f matrix, BufferBuilder buffer) {
-        World world = view.getWorld();
+        @Nullable
+        public @Nullable World getWorld();
         BlockEntity blockEntity = world.getBlockEntity(pos);
-
-        // Outline the block in red
-        renderOutline(buffer, pos, Colors.RED);
-
-        // If the block has a BlockEntity, outline it in green
-        if (blockEntity != null) {
-            renderOutline(buffer, pos, Colors.GREEN);
-        }
     }
 
     private void renderOutline(BufferBuilder buffer, BlockPos pos, int color) {
@@ -55,7 +48,7 @@ public class WorldRendererMixin {
         float yMax = pos.getY() + 1.005f;
         float zMax = pos.getZ() + 1.005f;
 
-        buffer.begin(VertexFormat.DrawMode.LINES, VertexFormat.DEFAULT);
+        buffer.begin(VertexFormat.DrawMode.LINES);
         buffer.vertex(xMin, yMin, zMin).color(color).next();
         buffer.vertex(xMax, yMin, zMin).color(color).next();
         buffer.vertex(xMax, yMin, zMax).color(color).next();
