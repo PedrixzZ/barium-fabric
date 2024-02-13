@@ -11,10 +11,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.joml.Vector3f;
 
-public static void registerMinecraftRenderer() {
-    Barium.LOGGER.info("Registre Minecraft Renderer for " + Barium.MOD_ID
-    }
-
 public class MinecraftRenderer {
 
     private static final int CHUNK_SIZE = 16;
@@ -135,4 +131,7 @@ public class MinecraftRenderer {
             this.z = z;
         }
     }
+    public static void registerMinecraftRenderer() {
+    Barium.LOGGER.info("Registre Minecraft Renderer for " + Barium.MOD_ID
+                       }
 }
