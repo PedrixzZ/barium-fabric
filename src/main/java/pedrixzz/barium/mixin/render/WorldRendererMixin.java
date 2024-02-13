@@ -1,11 +1,12 @@
 package pedrixzz.barium.mixin.render;
 
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.BlockRenderLayer;
 import net.minecraft.client.render.Frustum;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MatrixStack;
+import org.joml.Matrix4f
+import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,9 +21,9 @@ public abstract class WorldRendererMixin {
     @Shadow private int chunkIndexX;
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void onRenderStart(BlockRenderLayer layer, Frustum frustum, double cameraX, double cameraY, double cameraZ, MatrixStack projectionMatrix, MatrixStack viewMatrix, Entity viewEntity, boolean isWorldRenderer, int chunkIndexX, int chunkIndexY, int chunkIndexZ, CallbackInfo info) {
+    private void onRenderStart(RenderLayer layer, Frustum frustum, double cameraX, double cameraY, double cameraZ, MatrixStack projectionMatrix, MatrixStack viewMatrix, Entity viewEntity, boolean isWorldRenderer, int chunkIndexX, int chunkIndexY, int chunkIndexZ, CallbackInfo info) {
         // Desativar a renderização de blocos transparentes se não forem visíveis
-        if (layer == BlockRenderLayer.TRANSLUCENT) {
+        if (layer == RenderLayer.TRANSLUCENT) {
             if (!frustum.isBoundingBoxVisible(AxisAlignedBB.of(chunkIndexX * 16, chunkIndexY * 16, chunkIndexZ * 16, (chunkIndexX + 1) * 16, (chunkIndexY + 1) * 16, (chunkIndexZ + 1) * 16))) {
                 info.cancel();
                 return;
@@ -31,9 +32,9 @@ public abstract class WorldRendererMixin {
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void onRenderEnd(BlockRenderLayer layer, Frustum frustum, double cameraX, double cameraY, double cameraZ, MatrixStack projectionMatrix, MatrixStack viewMatrix, Entity viewEntity, boolean isWorldRenderer, int chunkIndexX, int chunkIndexY, int chunkIndexZ, CallbackInfo info) {
+    private void onRenderEnd(RenderLayer layer, Frustum frustum, double cameraX, double cameraY, double cameraZ, MatrixStack projectionMatrix, MatrixStack viewMatrix, Entity viewEntity, boolean isWorldRenderer, int chunkIndexX, int chunkIndexY, int chunkIndexZ, CallbackInfo info) {
         // Limpar a lista de vértices após a renderização
-        if (layer != BlockRenderLayer.TRANSLUCENT) {
+        if (layer != RenderLayer.TRANSLUCENT) {
             WorldRendererAccessor accessor = (WorldRendererAccessor) this;
             accessor.getVertexList().clear();
         }
