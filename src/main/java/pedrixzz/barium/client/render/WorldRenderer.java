@@ -1,5 +1,6 @@
 package pedrixzz.barium.client.render;
 
+import net.minecraft.client.render.WorldRenderer
 import pedrixzz.barium.Barium;
 import org.spongepowered.asm.mixin.Mixin;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.joml.Vector3f;
 
-public class MinecraftRenderer {
+public class WorldRenderer {
 
     private static final int CHUNK_SIZE = 16;
 
@@ -19,7 +20,7 @@ public class MinecraftRenderer {
     private List<Vertex> vertices = new ArrayList<>();
     private int vertexBuffer;
 
-    public MinecraftRenderer() {
+    public WorldRenderer() {
         // Criar buffer de vértices
         vertexBuffer = GL15.glGenBuffers();
     }
@@ -131,7 +132,7 @@ public class MinecraftRenderer {
             this.z = z;
         }
     }
-    public static void registerMinecraftRenderer() {
+    public static void registerWorldRenderer() {
     Barium.LOGGER.info("Registre Minecraft Renderer for " + Barium.MOD_ID);
                        }
 }
