@@ -1,5 +1,6 @@
 package pedrixzz.barium.client.render;
 
+import pedrixzz.barium.Barium;
 import org.spongepowered.asm.mixin.Mixin;
 import java.util.ArrayList;
 import net.minecraft.block.Block;
@@ -9,6 +10,10 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.joml.Vector3f;
+
+public static void registerMinecraftRenderer() {
+    Barium.LOGGER.info("Registre Minecraft Renderer for " + Barium.MOD_ID
+    }
 
 public class MinecraftRenderer {
 
