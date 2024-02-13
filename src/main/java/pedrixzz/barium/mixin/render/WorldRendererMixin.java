@@ -1,69 +1,41 @@
 package pedrixzz.barium.mixin.render;
 
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.client.render.BlockRenderLayer;
+import net.minecraft.client.render.Frustum;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Overwrite;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldRenderer.class)
-public class WorldRendererMixin {
+public abstract class WorldRendererMixin {
 
-    @Shadow
-    private BufferBuilder bufferBuilder;
+    @Shadow private int chunkIndexY;
+    @Shadow private int chunkIndexZ;
+    @Shadow private int chunkIndexX;
 
-    @Inject
-    public WorldRendererMixin(WorldRenderer worldRenderer) {
-        // ...
-    }
-
-    @Overwrite
-    public void render(World world, Entity viewEntity, IBlockState state, BlockPos pos, Matrix4f matrix4f, float f, float f1, float f2, float f3) {
-        // Otimização de vértices
-        int vertexCount = bufferBuilder.getVertexCount();
-        if (vertexCount > 0) {
-            VertexFormat vertexFormat = bufferBuilder.getVertexFormat();
-            int stride = vertexFormat.getVertexSize();
-
-            // Combine vértices adjacentes com a mesma cor e textura
-            for (int i = 0; i < vertexCount - 1; i++) {
-                int offsetA = i * stride;
-                int offsetB = (i + 1) * stride;
-
-                // Verifique se os vértices têm a mesma cor e textura
-                if (bufferBuilder.getColor(offsetA).equals(bufferBuilder.getColor(offsetB)) &&
-                        bufferBuilder.getTexCoord(offsetA).equals(bufferBuilder.getTexCoord(offsetB))) {
-                    // Combine os vértices
-                    bufferBuilder.setVertex(offsetA, bufferBuilder.getPosition(offsetA), bufferBuilder.getNormal(offsetA),
-                            bufferBuilder.getColor(offsetA), bufferBuilder.getTexCoord(offsetA), bufferBuilder.getLightmap(offsetA),
-                            bufferBuilder.getOverlay(offsetA));
-
-                    // Remova o vértice duplicado
-                    bufferBuilder.removeVertex(i + 1);
-                    vertexCount--;
-                    i--;
-                }
+    @Inject(method = "render", at = @At("HEAD"))
+    private void onRenderStart(BlockRenderLayer layer, Frustum frustum, double cameraX, double cameraY, double cameraZ, MatrixStack projectionMatrix, MatrixStack viewMatrix, Entity viewEntity, boolean isWorldRenderer, int chunkIndexX, int chunkIndexY, int chunkIndexZ, CallbackInfo info) {
+        // Desativar a renderização de blocos transparentes se não forem visíveis
+        if (layer == BlockRenderLayer.TRANSLUCENT) {
+            if (!frustum.isBoundingBoxVisible(AxisAlignedBB.of(chunkIndexX * 16, chunkIndexY * 16, chunkIndexZ * 16, (chunkIndexX + 1) * 16, (chunkIndexY + 1) * 16, (chunkIndexZ + 1) * 16))) {
+                info.cancel();
+                return;
             }
         }
-
-        // Otimização de shaders
-        // ...
-
-        // Multithreading
-        // ...
-
-        bufferBuilder.endVertex();
     }
 
-    // Otimização de alocações
-    // ...
-
-    // ...
+    @Inject(method = "render", at = @At("TAIL"))
+    private void onRenderEnd(BlockRenderLayer layer, Frustum frustum, double cameraX, double cameraY, double cameraZ, MatrixStack projectionMatrix, MatrixStack viewMatrix, Entity viewEntity, boolean isWorldRenderer, int chunkIndexX, int chunkIndexY, int chunkIndexZ, CallbackInfo info) {
+        // Limpar a lista de vértices após a renderização
+        if (layer != BlockRenderLayer.TRANSLUCENT) {
+            WorldRendererAccessor accessor = (WorldRendererAccessor) this;
+            accessor.getVertexList().clear();
+        }
+    }
 }
-
