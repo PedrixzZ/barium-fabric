@@ -1,6 +1,7 @@
 package pedrixzz.barium;
 
 import net.fabricmc.api.ModInitializer;
+import pedrixzz.barium.client.render.MinecraftRenderer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
