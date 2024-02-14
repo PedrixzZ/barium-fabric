@@ -4,6 +4,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Matrix4f;
 import net.minecraft.client.render.WorldRenderer;
@@ -74,6 +76,6 @@ public abstract class MixinWorldRenderer {
         for (int i = 0; i < 3; i++) {
             fogColors[i] = FOG_COLORS[i];
         }
-        instance.renderFog(matrices, matrix, f, d, e, g, h, fogColors, blendColors);
+//        instance.renderFog(matrices, matrix, f, d, e, g, h, fogColors, blendColors);
     }
 }
