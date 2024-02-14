@@ -21,9 +21,47 @@ import java.util.Queue;
 public class MixinParticleManager {
 	@Shadow @Final private Map<ParticleTextureSheet, Queue<Particle>> particles;
 
+	private static final int VISIBILITY_CACHE_SIZE = 1024;
+	private final boolean[] visibilityCache = new boolean[VISIBILITY_CACHE_SIZE];
+
 	@Inject(method = "renderParticles", at = @At("HEAD"), cancellable = true)
 	private void onRender(MatrixStack matrices, Immediate vertexConsumers, LightmapTextureManager lightmapTextureManager, Camera camera, float tickDelta, CallbackInfo ci) {
-		if(particles.isEmpty()) {
+		if (particles.isEmpty()) {
+			ci.cancel();
+			return;
+		}
+
+		int visibleParticles = 0;
+		for (Map.Entry<ParticleTextureSheet, Queue<Particle>> entry : particles.entrySet()) {
+			ParticleTextureSheet textureSheet = entry.getKey();
+			Queue<Particle> particleQueue = entry.getValue();
+
+			int renderedParticles = 0;
+			while (!particleQueue.isEmpty()) {
+				Particle particle = particleQueue.poll();
+				if (!particle.shouldRender(camera)) {
+					continue;
+				}
+
+				int cacheIndex = particle.getRenderIndex() % VISIBILITY_CACHE_SIZE;
+				if (!visibilityCache[cacheIndex]) {
+					visibilityCache[cacheIndex] = particle.isVisible(camera);
+				}
+
+				if (visibilityCache[cacheIndex]) {
+					particle.render(matrices, vertexConsumers, lightmapTextureManager, camera, tickDelta);
+					renderedParticles++;
+				}
+			}
+
+			if (renderedParticles == 0) {
+				particles.remove(textureSheet);
+			} else {
+				visibleParticles += renderedParticles;
+			}
+		}
+
+		if (visibleParticles == 0) {
 			ci.cancel();
 		}
 	}
