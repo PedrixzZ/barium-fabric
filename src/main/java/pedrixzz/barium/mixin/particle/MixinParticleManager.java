@@ -39,18 +39,18 @@ public class MixinParticleManager {
 			int renderedParticles = 0;
 			while (!particleQueue.isEmpty()) {
 				Particle particle = particleQueue.poll();
-				if (!particle.shouldRender(camera)) {
+		//		if (!particle.shouldRender(camera)) {
 					continue;
 				}
 
-				int cacheIndex = particle.getRenderIndex() % VISIBILITY_CACHE_SIZE;
-				if (!visibilityCache[cacheIndex]) {
-					visibilityCache[cacheIndex] = particle.isVisible(camera);
-				}
+		//		int cacheIndex = particle.getRenderIndex() % VISIBILITY_CACHE_SIZE;
+		//		if (!visibilityCache[cacheIndex]) {
+		//			visibilityCache[cacheIndex] = particle.isVisible(camera);
+		//		}
 
-				if (visibilityCache[cacheIndex]) {
-					particle.render(matrices, vertexConsumers, lightmapTextureManager, camera, tickDelta);
-					renderedParticles++;
+		//		if (visibilityCache[cacheIndex]) {
+		//			particle.render(matrices, vertexConsumers, lightmapTextureManager, camera, tickDelta);
+		//			renderedParticles++;
 				}
 			}
 
