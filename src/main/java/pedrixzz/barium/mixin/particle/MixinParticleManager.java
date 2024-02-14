@@ -43,7 +43,7 @@ public class MixinParticleManager {
                 Particle particle = particleQueue.poll();
 
                 if (particle.isAlive()) {
-                    particle.render(matrices, vertexConsumers, lightmapTextureManager, camera, tickDelta);
+                 //   particle.render(matrices, vertexConsumers, lightmapTextureManager, camera, tickDelta);
                 }
             }
         }
