@@ -33,8 +33,8 @@ public class MixinParticleManager {
 
             while (!particleQueue.isEmpty()) {
                 Particle particle = particleQueue.poll();
-                if (particle.shouldRender()) {
-                    particle.render(matrices, vertexConsumers, lightmapTextureManager, camera, tickDelta);
+           //     if (particle.shouldRender()) {
+           //         particle.render(matrices, vertexConsumers, lightmapTextureManager, camera, tickDelta);
                 } else {
                     particlesToRemove.add(particle);
                 }
