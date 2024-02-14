@@ -12,19 +12,28 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(WorldRenderer.class)
 public abstract class MixinWorldRenderer {
-	@Share("skyAngle") private final LocalFloatRef skyAngle = LocalFloatRef.of(0.0F);
+    private static final float RADIANS_PER_DEGREE = 0.017453292F;
+    private static final float TWO_PI = 6.2831855F;
 
-	@WrapOperation(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyAngle(F)F"))
-	private float cacheSkyAngle(ClientWorld world, float delta, Operation<Float> original) {
-		float result = original.call(world, delta);
-		skyAngle.set(result);
-		return result;
-	}
+    private float cachedSkyAngle;
 
-	@Redirect(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyAngleRadians(F)F"))
-	private float getSkyAngleRadians(ClientWorld world, float delta) {
-		return skyAngle.get() * 6.2831855F;
-	}
+    @WrapOperation(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyAngle(F)F", ordinal = 0))
+    private float cacheSkyAngle(ClientWorld world, float delta, Operation<Float> original,
+                                @Share("skyAngle") LocalFloatRef skyAngle) {
+        cachedSkyAngle = original.call(world, delta);
+        return cachedSkyAngle;
+    }
+
+    @Redirect(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyAngleRadians(F)F"))
+    private float getSkyAngleRadians(ClientWorld world, float delta) {
+        return cachedSkyAngle * TWO_PI;
+    }
+
+    @Redirect(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyAngle(F)F", ordinal = 1))
+    private float getSkyAngle(ClientWorld world, float delta) {
+        return cachedSkyAngle;
+    }
 }
