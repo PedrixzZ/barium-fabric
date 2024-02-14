@@ -50,7 +50,7 @@ public abstract class MixinWorldRenderer {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyColor(FFF)V"))
     private static void getSkyColor(ClientWorld world, float f, float g, float h) {
         if (skyUpdated || System.currentTimeMillis() - lastSkyColorUpdate > 100L) {
-            world.getSkyColor(f, g, h, SKY_COLORS);
+        //    world.getSkyColor(f, g, h, SKY_COLORS);
             lastSkyColorUpdate = System.currentTimeMillis();
         }
         for (int i = 0; i < 3; i++) {
@@ -62,7 +62,7 @@ public abstract class MixinWorldRenderer {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSunColor(FFF)V"))
     private static void getSunColor(ClientWorld world, float f, float g, float h) {
         if (skyUpdated || System.currentTimeMillis() - lastSunColorUpdate > 100L) {
-            world.getSunColor(f, g, h, SUN_COLORS);
+         //   world.getSunColor(f, g, h, SUN_COLORS);
 	    lastSunColorUpdate = System.currentTimeMillis();
         }
         for (int i = 0; i < 3; i++) {
