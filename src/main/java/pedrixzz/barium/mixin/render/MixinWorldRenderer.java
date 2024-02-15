@@ -1,39 +1,89 @@
 package pedrixzz.barium.mixin.render;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.world.ClientWorld;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.Tessellator;
+
+import org.lwjgl.opengl.GL11;
 
 @Mixin(WorldRenderer.class)
 public abstract class MixinWorldRenderer {
-    private static final float RADIANS_PER_DEGREE = 0.017453292F;
-    private static final float TWO_PI = 6.2831855F;
 
-    private float cachedSkyAngle;
+    @Shadow
+    private int vertexCount;
 
-    @WrapOperation(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyAngle(F)F", ordinal = 0))
-    private float cacheSkyAngle(ClientWorld world, float delta, Operation<Float> original,
-                                @Share("skyAngle") LocalFloatRef skyAngle) {
-        cachedSkyAngle = original.call(world, delta);
-        return cachedSkyAngle;
+    @Shadow
+    private boolean isDrawing;
+
+    @Inject
+    private void start(int mode) {
+        if (isDrawing) {
+            throw new IllegalStateException("Renderer already drawing!");
+        }
+        isDrawing = true;
+        vertexCount = 0;
+        GL11.glBegin(mode);
     }
 
-    @Redirect(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyAngleRadians(F)F"))
-    private float getSkyAngleRadians(ClientWorld world, float delta) {
-        return cachedSkyAngle * TWO_PI;
+    @Inject
+    private void draw() {
+        if (!isDrawing) {
+            throw new IllegalStateException("Renderer not drawing!");
+        }
+        tessellator.getBuffer().rewind();
+        while (tessellator.getBuffer().hasRemaining()) {
+            VertexFormat format = tessellator.getVertexFormat();
+            int position = 0;
+            for (int element : format.getElements()) {
+                switch (element) {
+                    case VertexFormatElement.POSITION:
+                        GL11.glVertex3f(
+                            tessellator.getBuffer().getShort(position),
+                            tessellator.getBuffer().getShort(position + 2),
+                            tessellator.getBuffer().getShort(position + 4)
+                        );
+                        position += 6;
+                        break;
+                    case VertexFormatElement.COLOR:
+                        GL11.glColor4ub(
+                            tessellator.getBuffer().getByte(position),
+                            tessellator.getBuffer().getByte(position + 1),
+                            tessellator.getBuffer().getByte(position + 2),
+                            tessellator.getBuffer().getByte(position + 3)
+                        );
+                        position += 4;
+                        break;
+                    case VertexFormatElement.UV:
+                        GL11.glTexCoord2f(
+                            tessellator.getBuffer().getShort(position) / 16.0f,
+                            tessellator.getBuffer().getShort(position + 2) / 16.0f
+                        );
+                        position += 4;
+                        break;
+                    case VertexFormatElement.NORMAL:
+                        GL11.glNormal3f(
+                            tessellator.getBuffer().getByte(position),
+                            tessellator.getBuffer().getByte(position + 1),
+                            tessellator.getBuffer().getByte(position + 2)
+                        );
+                        position += 3;
+                        break;
+                }
+            }
+            vertexCount++;
+        }
     }
 
-    @Redirect(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyAngle(F)F", ordinal = 1))
-    private float getSkyAngle(ClientWorld world, float delta) {
-        return cachedSkyAngle;
+    @Inject
+    private void finish() {
+        if (!isDrawing) {
+            throw new IllegalStateException("Renderer not drawing!");
+        }
+        isDrawing = false;
+        GL11.glEnd();
     }
 }
