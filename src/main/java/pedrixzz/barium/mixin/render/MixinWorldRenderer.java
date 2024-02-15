@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
 
 import org.lwjgl.opengl.GL11;
 
