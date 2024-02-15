@@ -13,10 +13,10 @@ import static org.lwjgl.opengl.GL11.*;
 @Mixin(WorldRenderer.class)
 public abstract class MixinWorldRenderer {
 
-    @Shadow @Final private static int CHUNK_SIZE;
+    @Shadow private static int CHUNK_SIZE;
 
     @Inject
-    public WorldRendererMixin(WorldRenderer worldRenderer) {
+    public MixinWorldRenderer(WorldRenderer worldRenderer) {
     }
 
     @ModifyArg(method = "render", at = 0)
