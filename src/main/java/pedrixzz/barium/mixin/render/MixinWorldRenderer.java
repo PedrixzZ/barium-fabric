@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldRenderer.class)
-public abstract class PerformanceMixin {
+public abstract class MixinWorldRenderer {
 
     @Inject
     @At(value = "HEAD", target = "renderWorld(Lnet/minecraft/client/render/Camera; FLnet/minecraft/world/World; Lnet/minecraft/util/math/BlockPos; Lnet/minecraft/client/util/math/MatrixStack; F)V")
