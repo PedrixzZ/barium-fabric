@@ -14,6 +14,7 @@ public abstract class MixinWorldRenderer {
 
     @Shadow private static int CHUNK_SIZE;
 
+    @Inject
     public MixinWorldRenderer(WorldRenderer worldRenderer) {
     }
 
