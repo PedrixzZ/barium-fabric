@@ -5,8 +5,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.At;
 
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.Tessellator;
 
 import org.lwjgl.opengl.GL11;
 
