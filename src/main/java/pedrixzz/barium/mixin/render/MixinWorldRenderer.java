@@ -14,11 +14,10 @@ public abstract class MixinWorldRenderer {
 
     @Shadow private static int CHUNK_SIZE;
 
-    @Inject
     public MixinWorldRenderer(WorldRenderer worldRenderer) {
     }
 
-    @ModifyArg(method = "render", at = 0)
+    @ModifyArg(method = "render", at = @At("HEAD"))
     private int modifyRender(int pass) {
         if (pass == 0) {
             // Ativar OpenGL 2.0
@@ -29,7 +28,7 @@ public abstract class MixinWorldRenderer {
         return pass;
     }
 
-    @ModifyArg(method = "renderBlock", at = 1)
+    @ModifyArg(method = "renderBlock", at = @At("TAIL"))
     private int modifyRenderBlock(int vertexCount) {
         // Otimizar renderização de blocos
         if (vertexCount > CHUNK_SIZE * CHUNK_SIZE * 6) {
