@@ -2,89 +2,41 @@ package pedrixzz.barium.mixin.render;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
 
-import org.lwjgl.opengl.GL11;
+import static org.lwjgl.opengl.GL11.*;
 
 @Mixin(WorldRenderer.class)
-public abstract class MixinWorldRenderer {
+public abstract class WorldRendererMixin {
 
-    @Shadow
-    private int vertexCount;
-
-    @Shadow
-    private boolean isDrawing;
+    @Shadow @Final private static int CHUNK_SIZE;
 
     @Inject
-    private void start(int mode) {
-        if (isDrawing) {
-            throw new IllegalStateException("Renderer already drawing!");
-        }
-        isDrawing = true;
-        vertexCount = 0;
-        GL11.glBegin(mode);
+    public WorldRendererMixin(WorldRenderer worldRenderer) {
     }
 
-    @Inject
-    private void draw() {
-        if (!isDrawing) {
-            throw new IllegalStateException("Renderer not drawing!");
+    @ModifyArg(method = "render", at = 0)
+    private int modifyRender(int pass) {
+        if (pass == 0) {
+            // Ativar OpenGL 2.0
+            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+            GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+            GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         }
-        tessellator.getBuffer().rewind();
-        while (tessellator.getBuffer().hasRemaining()) {
-            VertexFormat format = tessellator.getVertexFormat();
-            int position = 0;
-            for (int element : format.getElements()) {
-                switch (element) {
-                    case VertexFormatElement.POSITION:
-                        GL11.glVertex3f(
-                            tessellator.getBuffer().getShort(position),
-                            tessellator.getBuffer().getShort(position + 2),
-                            tessellator.getBuffer().getShort(position + 4)
-                        );
-                        position += 6;
-                        break;
-                    case VertexFormatElement.COLOR:
-                        GL11.glColor4ub(
-                            tessellator.getBuffer().getByte(position),
-                            tessellator.getBuffer().getByte(position + 1),
-                            tessellator.getBuffer().getByte(position + 2),
-                            tessellator.getBuffer().getByte(position + 3)
-                        );
-                        position += 4;
-                        break;
-                    case VertexFormatElement.UV:
-                        GL11.glTexCoord2f(
-                            tessellator.getBuffer().getShort(position) / 16.0f,
-                            tessellator.getBuffer().getShort(position + 2) / 16.0f
-                        );
-                        position += 4;
-                        break;
-                    case VertexFormatElement.NORMAL:
-                        GL11.glNormal3f(
-                            tessellator.getBuffer().getByte(position),
-                            tessellator.getBuffer().getByte(position + 1),
-                            tessellator.getBuffer().getByte(position + 2)
-                        );
-                        position += 3;
-                        break;
-                }
-            }
-            vertexCount++;
-        }
+        return pass;
     }
 
-    @Inject
-    private void finish() {
-        if (!isDrawing) {
-            throw new IllegalStateException("Renderer not drawing!");
+    @ModifyArg(method = "renderBlock", at = 1)
+    private int modifyRenderBlock(int vertexCount) {
+        // Otimizar renderização de blocos
+        if (vertexCount > CHUNK_SIZE * CHUNK_SIZE * 6) {
+            return CHUNK_SIZE * CHUNK_SIZE * 6;
         }
-        isDrawing = false;
-        GL11.glEnd();
+        return vertexCount;
     }
+
 }
