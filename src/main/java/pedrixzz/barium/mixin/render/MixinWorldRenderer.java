@@ -11,7 +11,7 @@ import net.minecraft.client.render.WorldRenderer;
 import static org.lwjgl.opengl.GL11.*;
 
 @Mixin(WorldRenderer.class)
-public abstract class WorldRendererMixin {
+public abstract class MixinWorldRenderer {
 
     @Shadow @Final private static int CHUNK_SIZE;
 
