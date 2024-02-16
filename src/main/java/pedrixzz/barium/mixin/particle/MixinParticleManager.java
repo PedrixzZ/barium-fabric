@@ -2,44 +2,45 @@ package pedrixzz.barium.mixin.particle;
 
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.particle.ParticleTextureSheet;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.VertexConsumerProvider.Immediate;
+import net.minecraft.client.util.math.MatrixStack;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+
 @Mixin(ParticleManager.class)
-public abstract class MixinParticleManager {
+public class MixinParticleManager {
+	@Shadow @Final private Map<ParticleTextureSheet, Queue<Particle>> particles;
 
-    @Inject
-    @At(value = "HEAD", target = "Lnet/minecraft/client/particle/ParticleManager;tick()V")
-    private void tick(ClientWorld world, Camera camera, float tickDelta) {
-        // Desative a renderização de partículas para entidades que não estejam na tela
-        for (Particle particle : world.getEntitiesByClass(Particle.class, null)) {
-            Box particleBoundingBox = particle.getBoundingBox();
-            Vec3d particlePos = particle.getPos();
-            if (!camera.isBoundingBoxVisible(particleBoundingBox) && !camera.isBoundingBoxVisible(particlePos)) {
-                particle.setExpired(true);
-            }
-        }
-    }
+	private List<Particle> particlesToRender = new ArrayList<>();
 
-    @Inject
-    @At(value = "HEAD", target = "Lnet/minecraft/client/particle/ParticleManager;addParticle(Lnet/minecraft/particle/Particle;)V")
-    private void addParticle(Particle particle, CallbackInfo ci) {
-        // Cancele a adição de partículas se o limite for excedido
-        if (world.getParticles().size() >= 10000) {
-            ci.cancel();
-            return;
-        }
-        
-        // Otimize a lógica de renderização de acordo com o tipo de partícula
-        if (particle instanceof FlameParticle) {
-            ((FlameParticle) particle).setAlpha(0.5f);
-        } else if (particle instanceof SmokeParticle) {
-            ((SmokeParticle) particle).setGravity(0.05f);
-        }
-    }
+	@Inject(method = "renderParticles", at = @At("HEAD"), cancellable = true)
+	private void onRender(MatrixStack matrices, Immediate vertexConsumers, LightmapTextureManager lightmapTextureManager, Camera camera, float tickDelta, CallbackInfo ci) {
+		particlesToRender.clear();
+
+		for (Map.Entry<ParticleTextureSheet, Queue<Particle>> entry : particles.entrySet()) {
+			Queue<Particle> queue = entry.getValue();
+			if (!queue.isEmpty()) {
+				particlesToRender.addAll(queue);
+			}
+		}
+
+		if (!particlesToRender.isEmpty()) {
+			// Renderização das partículas
+			// ...
+
+			ci.cancel();
+		}
+	}
 }
