@@ -25,7 +25,7 @@ public abstract class MixinGameRenderer {
         ReflectionHelper.findMethod(GameRenderer.class, "method_239232_a", 
             MatrixStack.class, float.class, long.class, boolean.class);
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;setupCamera(Lnet/minecraft/client/render/Camera;Lnet/minecraft/client/world/ClientWorld;Lnet/minecraft/entity/Entity;F)V"))
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;setupCamera(Lnet/minecraft/client/render/Camera;Lnet/minecraft/client/world/ClientWorld;Lnet/minecraft/entity/Entity;F)V"))
     private void redirectSetupCamera(GameRenderer instance, Camera camera, ClientWorld world, Entity entity, float tickDelta) {
         // Desabilita a frustum culling para aumentar o desempenho
         field_239224_a.set(instance, false);
