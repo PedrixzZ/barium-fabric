@@ -1,46 +1,36 @@
 package pedrixzz.barium.mixin.particle;
 
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.particle.ParticleTextureSheet;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.VertexConsumerProvider.Immediate;
-import net.minecraft.client.util.math.MatrixStack;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleManager;
 
 @Mixin(ParticleManager.class)
-public class MixinParticleManager {
-	@Shadow @Final private Map<ParticleTextureSheet, Queue<Particle>> particles;
+public class ParticleManagerMixin {
 
-	private List<Particle> particlesToRender = new ArrayList<>();
+    @Shadow
+    private static final int MAX_PARTICLES = 4096;
 
-	@Inject(method = "renderParticles", at = @At("HEAD"), cancellable = true)
-	private void onRender(MatrixStack matrices, Immediate vertexConsumers, LightmapTextureManager lightmapTextureManager, Camera camera, float tickDelta, CallbackInfo ci) {
-		particlesToRender.clear();
+    @Overwrite
+    public void update() {
+        // Reduzir o número máximo de partículas
+        int maxParticles = MAX_PARTICLES / 4;
 
-		for (Map.Entry<ParticleTextureSheet, Queue<Particle>> entry : particles.entrySet()) {
-			Queue<Particle> queue = entry.getValue();
-			if (!queue.isEmpty()) {
-				particlesToRender.addAll(queue);
-			}
-		}
+        // Iterar sobre as partículas ativas
+        for (int i = 0; i < maxParticles; i++) {
+            Particle particle = particles[i];
 
-		if (!particlesToRender.isEmpty()) {
-			// Renderização das partículas
-			// ...
+            // Atualizar a partícula
+            particle.tick();
 
-			ci.cancel();
-		}
-	}
+            // Se a partícula expirou, removê-la
+            if (particle.shouldDie()) {
+                particles[i] = particles[maxParticles - 1];
+                maxParticles--;
+            }
+        }
+    }
+
 }
