@@ -1,29 +1,65 @@
 package pedrixzz.barium.mixin.particle;
 
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.particle.ParticleTextureSheet;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.VertexConsumerProvider.Immediate;
+import net.minecraft.client.util.math.MatrixStack;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.particle.ParticleList;
-import net.minecraft.client.particle.Particle;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Queue;
 
 @Mixin(ParticleManager.class)
-public abstract class MixinParticleManager {
+public class MixinParticleManager {
+    @Shadow @Final private Map<ParticleTextureSheet, Queue<Particle>> particles;
 
-    @Inject
-    private static final int MAX_PARTICLES = 1000; // Ajuste este valor de acordo com suas necessidades.
+    @Inject(method = "renderParticles", at = @At("HEAD"), cancellable = true)
+    private void onRender(MatrixStack matrices, Immediate vertexConsumers, LightmapTextureManager lightmapTextureManager, Camera camera, float tickDelta, CallbackInfo ci) {
+        // Filtra as texturas com partículas vazias
+        Iterator<Map.Entry<ParticleTextureSheet, Queue<Particle>>> textureIterator = particles.entrySet().iterator();
+        while (textureIterator.hasNext()) {
+            Map.Entry<ParticleTextureSheet, Queue<Particle>> entry = textureIterator.next();
+            if (entry.getValue().isEmpty()) {
+                textureIterator.remove();
+            }
+        }
 
-    @Redirect(
-        method = "addParticle",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/particle/ParticleList;addParticle(Lnet/minecraft/client/particle/Particle;)V"
-        )
-    )
-    private static void onAddParticle(ParticleManager manager, Particle particle) {
-        if (manager.getParticleCount() < MAX_PARTICLES) {
-            ParticleList.addParticle(particle);
+        // Se nenhuma textura tiver partículas, cancela a renderização
+        if (particles.isEmpty()) {
+            ci.cancel();
+            return;
+        }
+
+        // Renderiza as partículas das texturas restantes
+        for (Map.Entry<ParticleTextureSheet, Queue<Particle>> entry : particles.entrySet()) {
+            ParticleTextureSheet textureSheet = entry.getKey();
+            Queue<Particle> particleQueue = entry.getValue();
+
+            textureSheet.bind();
+            renderParticleQueue(matrices, vertexConsumers, lightmapTextureManager, camera, tickDelta, particleQueue);
+        }
+    }
+
+    private void renderParticleQueue(MatrixStack matrices, Immediate vertexConsumers, LightmapTextureManager lightmapTextureManager, Camera camera, float tickDelta, Queue<Particle> particleQueue) {
+        // Otimiza iteração com pool de objetos
+        Iterator<Particle> particleIterator = particleQueue.iterator();
+        while (particleIterator.hasNext()) {
+            Particle particle = particleIterator.next();
+            if (!particle.shouldRender(camera, tickDelta)) {
+                particleIterator.remove();
+                continue;
+            }
+
+            particle.render(matrices, vertexConsumers, lightmapTextureManager, camera, tickDelta);
         }
     }
 }
